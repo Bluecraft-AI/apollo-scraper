@@ -522,8 +522,6 @@
 
     <script>
         let config = {};
-        let monitoringStartTime = null;
-        let monitoringInterval = null;
         
         // Load configuration from API endpoint
         async function loadConfiguration() {
@@ -537,7 +535,6 @@
                 
                 config = await response.json();
                 console.log('✅ Configuration loaded successfully from API');
-                console.log('🔗 Webhook URL:', config.WEBHOOK_URL);
                 
                 // Initialize the form after config is loaded
                 initializeForm();
@@ -547,7 +544,7 @@
                 console.log('🔄 Trying fallback configuration...');
                 
                 // Fallback: Show error message since we can't access environment variables from client-side
-                showStatus('Unable to load configuration. Please ensure your Vercel deployment has the required environment variables set: APIFY_TOKEN, WEBHOOK_URL, and APOLLO_ACTOR_ID.', 'error');
+                showStatus('Unable to load configuration. Please ensure your Vercel deployment has the required environment variables set: APIFY_TOKEN and APOLLO_ACTOR_ID.', 'error');
             }
         }
 
@@ -648,7 +645,7 @@
             
             console.log('🚀 Form submitted, starting Apollo scraper...');
             
-            if (!config.APIFY_TOKEN || !config.WEBHOOK_URL) {
+            if (!config.APIFY_TOKEN) {
                 showStatus('Configuration missing. Please check environment variables.', 'error');
                 return;
             }
@@ -749,15 +746,8 @@
                     return;
                 }
 
-                showStatus(`✅ Apollo scraper started! Run ID: ${runId}`, 'success');
-
-                // Note: Data delivery will be handled by Apify's native webhook integration
-                showStatus(`✅ Scraper started with native webhook integration! Data will be automatically delivered when complete. Run ID: ${runId}`, 'success');
+                showStatus(`✅ Apollo scraper started successfully! Run ID: ${runId}. Data will be delivered via native webhook when complete.`, 'success');
                 
-                // Start status updates (this will work on Vercel)
-                monitoringStartTime = Date.now();
-                startStatusUpdates(runId);
-
             } catch (error) {
                 console.error('❌ Error:', error);
                 showStatus(`❌ Error: ${error.message}`, 'error');
@@ -765,35 +755,6 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = '🚀 Start Automated Workflow';
             }
-        }
-
-        function startStatusUpdates(runId) {
-            if (monitoringInterval) {
-                clearInterval(monitoringInterval);
-            }
-            
-            monitoringInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs/${runId}?token=${config.APIFY_TOKEN}`);
-                    const runData = await response.json();
-                    
-                    const status = runData.data.status;
-                    const elapsed = Math.floor((Date.now() - monitoringStartTime) / 1000);
-                    
-                    if (status === 'RUNNING') {
-                        showStatus(`🔄 Scraper running... (${elapsed}s elapsed)`, 'info');
-                    } else if (status === 'SUCCEEDED') {
-                        clearInterval(monitoringInterval);
-                        const stats = runData.data.stats;
-                        showStatus(`✅ Scraper completed! Retrieved ${stats.itemCount || 'unknown'} leads. Data sent to webhook.`, 'success');
-                    } else if (status === 'FAILED') {
-                        clearInterval(monitoringInterval);
-                        showStatus(`❌ Scraper failed. Check logs at: https://console.apify.com/actors/runs/${runId}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Status check failed:', error);
-                }
-            }, 30000); // Check every 30 seconds
         }
 
         // Load configuration when page loads

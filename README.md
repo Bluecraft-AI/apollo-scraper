@@ -1,115 +1,90 @@
-# 🚀 Apollo Lead Scraper - Super Simple Setup
+# 🚀 Apollo Lead Scraper - Vercel Deployment
 
-**What this does:** Automatically gets contact information (leads) from Apollo.io and sends them to your system. No technical knowledge required!
+**What this does:** Automatically gets contact information (leads) from Apollo.io and delivers them via webhook. Fully automated with native Apify integration!
 
 ## 🎯 What You Get
-- **500 leads automatically** from any Apollo search
-- **No waiting around** - it works in the background
-- **Delivered automatically** to your system when done
+- **Up to 50,000 leads automatically** from any Apollo search
+- **No background monitoring needed** - Apify handles everything
+- **Delivered automatically** via native webhook when complete
 - **One-click operation** - just paste and click!
+- **Serverless deployment** - works on Vercel without any servers
 
 ---
 
-## 📋 Step-by-Step Setup (5 minutes)
+## 📋 Environment Variables Required
 
-### Step 1: Open Your Computer's "Terminal" 
-**What's a terminal?** It's like a text-based way to talk to your computer.
-
-**On Mac:** Press `Cmd + Space`, type "Terminal", press Enter
-**On Windows:** Press `Windows key`, type "Command Prompt", press Enter
-
-### Step 2: Go to the Right Folder
-Copy and paste this into the terminal, then press Enter:
+### Required Variables:
 ```
-cd "/Users/mikelawrence/Cursor/Apify Actor - Apollo Scraper"
+APIFY_TOKEN=your_apify_token_here
+APOLLO_ACTOR_ID=code_crafter/apollo-io-scraper
 ```
 
-### Step 3: Start the System
-Copy and paste this into the terminal, then press Enter:
+### Optional Variables:
 ```
-npm start
+# No longer needed - webhook configured in Apify Console
+# WEBHOOK_URL=removed (use native webhook integration)
 ```
 
-**You'll see:** Lots of text with checkmarks ✅ - this means it's working!
+---
 
-### Step 4: Open Your Web Browser
-1. Open Chrome, Safari, or any web browser
-2. In the address bar, type: `http://localhost:3000`
-3. Press Enter
+## 🎯 Setup Instructions
 
-**You'll see:** A simple form where you can paste your Apollo link
+### Step 1: Deploy to Vercel
+1. Connect your GitHub repository to Vercel
+2. Set the required environment variables in Vercel dashboard
+3. Deploy the application
+
+### Step 2: Configure Native Webhook in Apify
+1. Go to https://console.apify.com/actors
+2. Find `code_crafter/apollo-io-scraper` actor
+3. Click "Webhooks" tab
+4. Add webhook with event `ACTOR.RUN.SUCCEEDED`
+5. Configure your webhook URL and payload template
+
+### Step 3: Use the Application
+1. Visit your Vercel deployment URL
+2. Paste your Apollo search URL
+3. Click "Start Automated Workflow"
+4. Data will be delivered to your webhook automatically!
 
 ---
 
-## 🎯 How to Use It (30 seconds)
+## 🎯 How It Works
 
-### Step 1: Get Your Apollo Link
-1. Go to Apollo.io in another browser tab
-2. Do your search (job titles, locations, etc.)
-3. Copy the long web address from the top of your browser
-
-### Step 2: Use the Form
-1. Paste your Apollo link into the big text box
-2. Click the blue "Start Automated Workflow" button
-3. **That's it!** 
-
-### Step 3: Close Everything
-- You can close the browser tab
-- You can close your laptop
-- The system keeps working automatically!
+1. **Submit Apollo URL** through the web form
+2. **Apify actor starts** automatically via API
+3. **Native webhook delivers data** when scraping completes
+4. **No background monitoring needed** - all handled by Apify
 
 ---
 
-## 🎉 What Happens Next?
+## ✅ Benefits of Native Integration
 
-1. **The system starts working** (you'll see a success message)
-2. **It scrapes Apollo automatically** (takes 2-5 minutes usually)
-3. **It gets 500 leads** (names, emails, companies, etc.)
-4. **It sends them to your system automatically** (via webhook)
-5. **You get notified when it's done!**
-
----
-
-## 🛑 How to Stop Everything
-
-**To stop the system:**
-1. Go back to the terminal (black window with text)
-2. Press `Ctrl + C` (hold Ctrl, then press C)
-3. Everything stops safely
-
-**To start again later:**
-1. Open terminal again
-2. Type `npm start` and press Enter
-3. Go to `http://localhost:3000` in your browser
+- **More Reliable** - Apify handles retries and delivery
+- **Simpler Setup** - No webhook URL environment variable needed
+- **Better Performance** - No custom background monitoring
+- **Easier Management** - Configure once in Apify Console
+- **Serverless Compatible** - Works perfectly on Vercel
 
 ---
 
-## ❓ Common Questions
+## 🛠️ Technical Details
 
-**Q: What if I see error messages?**
-A: Most errors fix themselves. If something seems broken, just stop (Ctrl+C) and start again (npm start).
-
-**Q: Can I run multiple searches?**
-A: Yes! Just submit another Apollo link in the form. Each one runs automatically.
-
-**Q: How do I know it's working?**
-A: You'll see a green success message, and your webhook will receive the leads when done.
-
-**Q: What if my computer goes to sleep?**
-A: The system keeps running in the background. Your leads will still be delivered.
-
-**Q: Is this safe?**
-A: Yes! Everything runs only on your computer. No data is shared with anyone else.
+**Frontend:** Static HTML/JS served by Vercel
+**Backend:** Serverless API endpoints for configuration
+**Scraping:** Apify actor `code_crafter/apollo-io-scraper`
+**Delivery:** Native Apify webhook integration
+**Hosting:** Vercel serverless platform
 
 ---
 
-## 🎯 That's It!
+## 🎉 That's It!
 
-**You now have a fully automated lead generation system!**
+**You now have a fully automated, serverless lead generation system!**
 
-1. **Start it:** `npm start` in terminal
-2. **Use it:** Go to `http://localhost:3000` 
-3. **Paste Apollo link and click submit**
-4. **Get 500 leads automatically!**
+1. **Deploy:** Push to GitHub, deploy on Vercel
+2. **Configure:** Set environment variables and webhook
+3. **Use:** Submit Apollo URLs and get leads automatically
+4. **Scale:** Handle thousands of leads without any infrastructure!
 
-**No coding, no technical stuff, just results!** 🚀 
+**No servers, no monitoring, just results!** 🚀 

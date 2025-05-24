@@ -18,14 +18,12 @@ export default function handler(req, res) {
             // Log environment variables (without exposing sensitive data)
             console.log('Environment check:', {
                 hasApifyToken: !!process.env.APIFY_TOKEN,
-                hasWebhookUrl: !!process.env.WEBHOOK_URL,
                 hasActorId: !!process.env.APOLLO_ACTOR_ID
             });
             
             const config = {
                 APIFY_TOKEN: process.env.APIFY_TOKEN || '',
-                WEBHOOK_URL: process.env.WEBHOOK_URL || '',
-                APOLLO_ACTOR_ID: process.env.APOLLO_ACTOR_ID || 'bluecraftai~apollo-scraper',
+                APOLLO_ACTOR_ID: process.env.APOLLO_ACTOR_ID || 'code_crafter/apollo-io-scraper',
                 DEFAULT_SETTINGS: {
                     maxLeads: 50000,
                     defaultLeads: 100,
