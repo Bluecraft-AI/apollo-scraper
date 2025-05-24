@@ -656,6 +656,15 @@
             return cleanedUrl;
         }
 
+        function generateRandomFileName() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
         async function sendEmailWebhook(email, leadCount, apolloUrl) {
             try {
                 if (!config.EMAIL_WEBHOOK_URL) {
@@ -670,7 +679,8 @@
                     leadCount: leadCount,
                     apolloUrl: apolloUrl,
                     timestamp: new Date().toISOString(),
-                    service: 'apollo-scraper'
+                    service: 'apollo-scraper',
+                    fileName: generateRandomFileName()
                 };
 
                 const response = await fetch(config.EMAIL_WEBHOOK_URL, {
@@ -718,9 +728,13 @@
                 // Enhanced URL validation and cleaning
                 const cleanedUrl = cleanAndValidateApolloUrl(apolloUrl);
                 
+                // Generate random file name for this run
+                const fileName = generateRandomFileName();
+                
                 // Log the cleaned URL for debugging
                 console.log('🔗 Cleaned Apollo URL:', cleanedUrl);
                 console.log('🔗 URL length:', cleanedUrl.length);
+                console.log('📁 Generated file name:', fileName);
 
                 showStatus('🚀 Starting Apollo scraper...', 'info');
 
@@ -732,6 +746,7 @@
                 const payload = {
                     url: cleanedUrl,
                     totalRecords: leadCount,
+                    fileName: fileName,
                     email: email,
                     cleanOutput: cleanOutput
                 };
@@ -740,6 +755,7 @@
                 console.log('📦 Payload details:');
                 console.log(`   URL length: ${cleanedUrl.length} characters`);
                 console.log(`   Total records: ${leadCount}`);
+                console.log(`   File name: ${fileName}`);
                 console.log(`   Email: ${email}`);
                 console.log(`   Clean output: ${cleanOutput}`);
                 console.log(`   Payload size: ${JSON.stringify(payload).length} bytes`);
