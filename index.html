@@ -672,7 +672,7 @@
 
                 showStatus('🚀 Starting Apollo scraper...', 'info');
 
-                // Call the Apollo actor (webhook will be configured natively in Apify Console)
+                // Call the Apollo actor (webhook will be configured in Apify Console)
                 const actorUrl = `https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs?token=${config.APIFY_TOKEN}`;
                 console.log('📡 Calling Apollo actor:', actorUrl);
 
