@@ -18,12 +18,14 @@ export default function handler(req, res) {
             // Log environment variables (without exposing sensitive data)
             console.log('Environment check:', {
                 hasApifyToken: !!process.env.APIFY_TOKEN,
-                hasActorId: !!process.env.APOLLO_ACTOR_ID
+                hasActorId: !!process.env.APOLLO_ACTOR_ID,
+                hasEmailWebhookUrl: !!process.env.EMAIL_WEBHOOK_URL
             });
             
             const config = {
                 APIFY_TOKEN: process.env.APIFY_TOKEN || '',
                 APOLLO_ACTOR_ID: process.env.APOLLO_ACTOR_ID || 'code_crafter/apollo-io-scraper',
+                EMAIL_WEBHOOK_URL: process.env.EMAIL_WEBHOOK_URL || '',
                 DEFAULT_SETTINGS: {
                     maxLeads: 50000,
                     defaultLeads: 100,

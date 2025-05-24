@@ -36,6 +36,7 @@ In Vercel dashboard:
 2. Add these variables:
    - `APIFY_TOKEN` = `your_apify_token_here`
    - `APOLLO_ACTOR_ID` = `code_crafter~apollo-io-scraper`
+   - `EMAIL_WEBHOOK_URL` = `your_email_webhook_endpoint_here`
 
 ### Step 5: Configure Webhook in Apify Console
 1. Go to [Apify Console](https://console.apify.com)

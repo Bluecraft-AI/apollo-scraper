@@ -485,17 +485,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="fileName">
-                        <i class="fas fa-file"></i> File Name (Optional)
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email
                     </label>
                     <input 
-                        type="text" 
-                        id="fileName" 
-                        name="fileName" 
-                        placeholder="Apollo Prospects"
-                        value="Apollo Prospects"
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your@email.com"
+                        required
                     >
-                    <small>Name for your exported file</small>
+                    <small>Your email address</small>
                 </div>
 
                 <div class="form-group">
@@ -656,6 +656,42 @@
             return cleanedUrl;
         }
 
+        async function sendEmailWebhook(email, leadCount, apolloUrl) {
+            try {
+                if (!config.EMAIL_WEBHOOK_URL) {
+                    console.log('ℹ️ No EMAIL_WEBHOOK_URL configured, skipping email webhook');
+                    return;
+                }
+
+                console.log('📧 Sending email webhook notification...');
+                
+                const emailPayload = {
+                    email: email,
+                    leadCount: leadCount,
+                    apolloUrl: apolloUrl,
+                    timestamp: new Date().toISOString(),
+                    service: 'apollo-scraper'
+                };
+
+                const response = await fetch(config.EMAIL_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'Apollo-Scraper-Email/1.0'
+                    },
+                    body: JSON.stringify(emailPayload)
+                });
+
+                if (response.ok) {
+                    console.log('✅ Email webhook sent successfully');
+                } else {
+                    console.log(`⚠️ Email webhook failed: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Email webhook error:', error);
+            }
+        }
+
         async function handleFormSubmit(e) {
             e.preventDefault();
             
@@ -673,10 +709,10 @@
             const formData = new FormData(e.target);
             const apolloUrl = formData.get('apolloUrl');
             const leadCount = parseInt(formData.get('leadCount'));
-            const fileName = formData.get('fileName');
+            const email = formData.get('email');
             const cleanOutput = formData.get('cleanOutput') === 'on';
 
-            console.log('📋 Form data:', { apolloUrl, leadCount, fileName, cleanOutput });
+            console.log('📋 Form data:', { apolloUrl, leadCount, email, cleanOutput });
 
             try {
                 // Enhanced URL validation and cleaning
@@ -696,7 +732,7 @@
                 const payload = {
                     url: cleanedUrl,
                     totalRecords: leadCount,
-                    fileName: fileName,
+                    email: email,
                     cleanOutput: cleanOutput
                 };
 
@@ -704,7 +740,7 @@
                 console.log('📦 Payload details:');
                 console.log(`   URL length: ${cleanedUrl.length} characters`);
                 console.log(`   Total records: ${leadCount}`);
-                console.log(`   File name: ${fileName}`);
+                console.log(`   Email: ${email}`);
                 console.log(`   Clean output: ${cleanOutput}`);
                 console.log(`   Payload size: ${JSON.stringify(payload).length} bytes`);
 
@@ -763,6 +799,9 @@
                 }
 
                 showStatus(`✅ Apollo scraper started successfully! Your CSV will be delivered to you shortly when complete.`, 'success');
+                
+                // Send email webhook notification
+                await sendEmailWebhook(email, leadCount, apolloUrl);
                 
             } catch (error) {
                 console.error('❌ Error:', error);
