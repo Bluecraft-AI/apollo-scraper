@@ -675,9 +675,9 @@
 
                 showStatus('🚀 Starting Apollo scraper...', 'info');
 
-                // Call the Apollo actor
-                const actorUrl = `https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs?token=${config.APIFY_TOKEN}`;
-                console.log('📡 Calling Apollo actor:', actorUrl);
+                // Call the Apollo actor with webhook configuration
+                const actorUrl = `https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs?token=${config.APIFY_TOKEN}&webhooks=[{"eventTypes":["ACTOR.RUN.SUCCEEDED"],"requestUrl":"${encodeURIComponent(config.WEBHOOK_URL)}","payloadTemplate":"{\\"data\\":\\"{{data}}\\",\\"resource\\":{\\"id\\":\\"{{resource.id}}\\",\\"actId\\":\\"{{resource.actId}}\\",\\"userId\\":\\"{{resource.userId}}\\",\\"status\\":\\"{{resource.status}}\\",\\"startedAt\\":\\"{{resource.startedAt}}\\",\\"finishedAt\\":\\"{{resource.finishedAt}}\\",\\"buildId\\":\\"{{resource.buildId}}\\",\\"exitCode\\":\\"{{resource.exitCode}}\\",\\"defaultDatasetId\\":\\"{{resource.defaultDatasetId}}\\",\\"stats\\":\\"{{resource.stats}}\\"}}"}]`;
+                console.log('📡 Calling Apollo actor with webhook:', actorUrl);
 
                 // Prepare the payload
                 const payload = {
@@ -751,13 +751,13 @@
 
                 showStatus(`✅ Apollo scraper started! Run ID: ${runId}`, 'success');
 
-                // Try to start background monitoring
-                try {
-                    await startBackgroundMonitoring(runId);
-                } catch (monitorError) {
-                    console.warn('⚠️ Background monitoring failed:', monitorError);
-                    showStatus(`✅ Scraper started (Run ID: ${runId}). Background monitoring failed - you can monitor manually at: https://console.apify.com/actors/runs/${runId}`, 'warning');
-                }
+                // Note: Background monitoring doesn't work on Vercel (serverless)
+                // Instead, we're using Apify's built-in webhook system to deliver data directly
+                showStatus(`✅ Scraper started with webhook delivery! Data will be automatically sent to your webhook when complete. Run ID: ${runId}`, 'success');
+                
+                // Start status updates (this will work on Vercel)
+                monitoringStartTime = Date.now();
+                startStatusUpdates(runId);
 
             } catch (error) {
                 console.error('❌ Error:', error);
@@ -765,41 +765,6 @@
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = '🚀 Start Automated Workflow';
-            }
-        }
-
-        async function startBackgroundMonitoring(runId) {
-            console.log('🔄 Starting background monitoring for run:', runId);
-            
-            try {
-                const response = await fetch('/start-monitor', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        runId: runId,
-                        webhookUrl: config.WEBHOOK_URL,
-                        apifyToken: config.APIFY_TOKEN
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Monitor start failed: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('✅ Background monitoring started');
-                console.log('🆔 Monitor PID:', result.pid);
-                
-                showStatus(`✅ Scraper started and monitoring enabled! You can close this browser - you'll be notified when complete.`, 'success');
-                
-                monitoringStartTime = Date.now();
-                startStatusUpdates(runId);
-                
-            } catch (error) {
-                console.error('❌ Background monitoring failed:', error);
-                throw error;
             }
         }
 
