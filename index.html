@@ -460,9 +460,9 @@
                                 type="number" 
                                 id="leadCount" 
                                 name="leadCount" 
-                                min="1" 
+                                min="500" 
                                 max="50000" 
-                                value="100"
+                                value="500"
                                 required
                             >
                         </div>
@@ -471,14 +471,17 @@
                                 type="range" 
                                 id="leadSlider" 
                                 class="slider"
-                                min="1" 
+                                min="500" 
                                 max="50000" 
-                                value="100"
+                                value="500"
                                 step="1"
                             >
                         </div>
                     </div>
-                    <small>Free users: up to 100 leads | Paid users: up to 50,000 leads</small>
+                    <small>Minimum scrape: 500 leads | Maximum scrape: 50,000 leads</small>
+                    <div id="priceCalculator" style="font-size: 0.85rem; color: #666; margin-top: 5px;">
+                        Estimated cost: $0.60
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -553,12 +556,25 @@
             const leadCountInput = document.getElementById('leadCount');
             const leadSlider = document.getElementById('leadSlider');
 
+            // Function to calculate and display price
+            function updatePriceCalculator(leadCount) {
+                const pricePerThousand = 1.20;
+                const totalPrice = (leadCount / 1000) * pricePerThousand;
+                const priceCalculator = document.getElementById('priceCalculator');
+                priceCalculator.textContent = `Estimated cost: $${totalPrice.toFixed(2)}`;
+            }
+
+            // Initialize price calculator
+            updatePriceCalculator(500);
+
             leadCountInput.addEventListener('input', function() {
                 leadSlider.value = this.value;
+                updatePriceCalculator(parseInt(this.value));
             });
 
             leadSlider.addEventListener('input', function() {
                 leadCountInput.value = this.value;
+                updatePriceCalculator(parseInt(this.value));
             });
 
             // Add form submit handler

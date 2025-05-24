@@ -35,10 +35,60 @@ In Vercel dashboard:
 1. Go to your project → Settings → Environment Variables
 2. Add these variables:
    - `APIFY_TOKEN` = `your_apify_token_here`
-   - `WEBHOOK_URL` = `your_webhook_url_here`
    - `APOLLO_ACTOR_ID` = `code_crafter~apollo-io-scraper`
 
-### Step 5: Add Custom Domain
+### Step 5: Configure Webhook in Apify Console
+1. Go to [Apify Console](https://console.apify.com)
+2. Navigate to your Apollo actor
+3. Go to **Settings** → **Webhooks**
+4. Click **Add Webhook**
+5. Configure:
+   - **Event types**: `ACTOR.RUN.SUCCEEDED`
+   - **Request URL**: Your webhook endpoint (e.g., n8n webhook URL)
+   - **Payload template**:
+   ```json
+   {
+       "metadata": {
+           "success": true,
+           "message": "Data automatically sent by Apify webhook",
+           "totalRecords": {{resource.stats.itemCount}},
+           "runId": "{{resource.id}}",
+           "datasetId": "{{resource.defaultDatasetId}}",
+           "timestamp": "{{createdAt}}",
+           "automatedDelivery": true,
+           "backgroundMonitor": false,
+           "apifyWebhook": true,
+           "runStartedAt": "{{resource.startedAt}}",
+           "runFinishedAt": "{{resource.finishedAt}}",
+           "runStatus": "{{resource.status}}",
+           "actorId": "{{resource.actId}}",
+           "userId": "{{resource.userId}}",
+           "buildId": "{{resource.buildId}}",
+           "exitCode": {{resource.exitCode}},
+           "stats": {{resource.stats}}
+       }
+   }
+   ```
+   - **Headers template**:
+   ```json
+   {
+       "Content-Type": "application/json",
+       "User-Agent": "Apify-Native-Webhook/1.0",
+       "X-Apollo-Scraper": "automated-delivery"
+   }
+   ```
+
+### Step 6: Set Up Data Retrieval (n8n Example)
+Since Apify webhooks only send metadata, you'll need to fetch the actual dataset items:
+
+1. **Webhook node** receives the metadata
+2. **HTTP Request node** fetches data using:
+   ```
+   https://api.apify.com/v2/datasets/{{ $json.body.metadata.datasetId }}/items?token=your_apify_token
+   ```
+3. Process and forward the complete data as needed
+
+### Step 7: Add Custom Domain (Optional)
 1. In Vercel dashboard → Domains
 2. Add your custom domain (e.g., `apollo.yourdomain.com`)
 3. Follow DNS setup instructions
@@ -52,6 +102,7 @@ In Vercel dashboard:
 - ✅ HTTPS enabled automatically
 - ✅ Environment variables encrypted
 - ✅ Auto-deployments from GitHub
+- ✅ Webhook configured at actor level (more reliable)
 
 ## 🔄 Future Updates:
 Just push to GitHub - Vercel auto-deploys!
@@ -61,6 +112,20 @@ git add .
 git commit -m "Update Apollo Scraper"
 git push
 ```
+
+## 📋 Important Notes:
+
+### Webhook Data Flow:
+1. **Apollo Scraper** runs and completes
+2. **Apify webhook** sends metadata (including `datasetId`) to your endpoint
+3. **Your webhook handler** uses the `datasetId` to fetch actual scraped data
+4. **Complete data** (metadata + scraped items) is processed/forwarded
+
+### Why This Approach:
+- ✅ Apify webhooks don't include dataset items directly
+- ✅ Metadata contains `datasetId` to fetch data separately
+- ✅ More reliable than trying to include large datasets in webhook payload
+- ✅ Follows Apify's recommended webhook patterns
 
 ## Alternative Platforms:
 
@@ -88,4 +153,5 @@ Your Apollo Scraper will be live on the web with:
 - ✅ Custom domain
 - ✅ Secure API keys
 - ✅ Auto-deployments
+- ✅ Proper webhook configuration
 - ✅ No server management needed! 
