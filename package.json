@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "echo 'No build step required for Node.js app'",
-    "test": "node test-automation.js"
+    "build": "node build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["apollo", "scraper", "leads", "automation", "webhook"],
   "author": "Your Name",
