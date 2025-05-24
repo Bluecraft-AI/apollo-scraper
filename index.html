@@ -675,9 +675,9 @@
 
                 showStatus('🚀 Starting Apollo scraper...', 'info');
 
-                // Call the Apollo actor with webhook configuration
-                const actorUrl = `https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs?token=${config.APIFY_TOKEN}&webhooks=[{"eventTypes":["ACTOR.RUN.SUCCEEDED"],"requestUrl":"${encodeURIComponent(config.WEBHOOK_URL)}","payloadTemplate":"{\\"data\\":\\"{{data}}\\",\\"resource\\":{\\"id\\":\\"{{resource.id}}\\",\\"actId\\":\\"{{resource.actId}}\\",\\"userId\\":\\"{{resource.userId}}\\",\\"status\\":\\"{{resource.status}}\\",\\"startedAt\\":\\"{{resource.startedAt}}\\",\\"finishedAt\\":\\"{{resource.finishedAt}}\\",\\"buildId\\":\\"{{resource.buildId}}\\",\\"exitCode\\":\\"{{resource.exitCode}}\\",\\"defaultDatasetId\\":\\"{{resource.defaultDatasetId}}\\",\\"stats\\":\\"{{resource.stats}}\\"}}"}]`;
-                console.log('📡 Calling Apollo actor with webhook:', actorUrl);
+                // Call the Apollo actor (webhook will be configured natively in Apify Console)
+                const actorUrl = `https://api.apify.com/v2/acts/${config.APOLLO_ACTOR_ID}/runs?token=${config.APIFY_TOKEN}`;
+                console.log('📡 Calling Apollo actor:', actorUrl);
 
                 // Prepare the payload
                 const payload = {
@@ -751,9 +751,8 @@
 
                 showStatus(`✅ Apollo scraper started! Run ID: ${runId}`, 'success');
 
-                // Note: Background monitoring doesn't work on Vercel (serverless)
-                // Instead, we're using Apify's built-in webhook system to deliver data directly
-                showStatus(`✅ Scraper started with webhook delivery! Data will be automatically sent to your webhook when complete. Run ID: ${runId}`, 'success');
+                // Note: Data delivery will be handled by Apify's native webhook integration
+                showStatus(`✅ Scraper started with native webhook integration! Data will be automatically delivered when complete. Run ID: ${runId}`, 'success');
                 
                 // Start status updates (this will work on Vercel)
                 monitoringStartTime = Date.now();
