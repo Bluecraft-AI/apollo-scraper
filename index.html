@@ -737,16 +737,26 @@
 
                 const result = await response.json();
                 console.log('✅ Apollo actor started successfully');
-                console.log('🆔 Run ID:', result.id);
+                console.log('📊 Full API Response:', result);
+                
+                // Extract run ID from response (Apify API returns it in data.id)
+                const runId = result.data?.id || result.id || result.runId;
+                console.log('🆔 Run ID:', runId);
 
-                showStatus(`✅ Apollo scraper started! Run ID: ${result.id}`, 'success');
+                if (!runId) {
+                    console.error('❌ No run ID found in response:', result);
+                    showStatus('❌ Error: Could not get run ID from Apify API response', 'error');
+                    return;
+                }
+
+                showStatus(`✅ Apollo scraper started! Run ID: ${runId}`, 'success');
 
                 // Try to start background monitoring
                 try {
-                    await startBackgroundMonitoring(result.id);
+                    await startBackgroundMonitoring(runId);
                 } catch (monitorError) {
                     console.warn('⚠️ Background monitoring failed:', monitorError);
-                    showStatus(`✅ Scraper started (Run ID: ${result.id}). Background monitoring failed - you can monitor manually at: https://console.apify.com/actors/runs/${result.id}`, 'warning');
+                    showStatus(`✅ Scraper started (Run ID: ${runId}). Background monitoring failed - you can monitor manually at: https://console.apify.com/actors/runs/${runId}`, 'warning');
                 }
 
             } catch (error) {
