@@ -34,8 +34,8 @@ git push -u origin main
 In Vercel dashboard:
 1. Go to your project → Settings → Environment Variables
 2. Add these variables:
-   - `APIFY_TOKEN` = `apify_api_x6jeLKaoX4NFjukB0QWzYLBWBgp7Zv0JlzFb`
-   - `WEBHOOK_URL` = `https://bluecraftleads.app.n8n.cloud/webhook/38790a61-61d2-455b-a620-a04a297ebf72`
+   - `APIFY_TOKEN` = `your_apify_token_here`
+   - `WEBHOOK_URL` = `your_webhook_url_here`
    - `APOLLO_ACTOR_ID` = `code_crafter~apollo-io-scraper`
 
 ### Step 5: Add Custom Domain
