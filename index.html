@@ -665,7 +665,7 @@
             return result;
         }
 
-        async function sendEmailWebhook(email, leadCount, apolloUrl) {
+        async function sendEmailWebhook(email, leadCount, apolloUrl, fileName) {
             try {
                 if (!config.EMAIL_WEBHOOK_URL) {
                     console.log('ℹ️ No EMAIL_WEBHOOK_URL configured, skipping email webhook');
@@ -680,7 +680,7 @@
                     apolloUrl: apolloUrl,
                     timestamp: new Date().toISOString(),
                     service: 'apollo-scraper',
-                    fileName: generateRandomFileName()
+                    fileName: fileName
                 };
 
                 const response = await fetch(config.EMAIL_WEBHOOK_URL, {
@@ -817,7 +817,7 @@
                 showStatus(`✅ Apollo scraper started successfully! Your CSV will be delivered to you shortly when complete.`, 'success');
                 
                 // Send email webhook notification
-                await sendEmailWebhook(email, leadCount, apolloUrl);
+                await sendEmailWebhook(email, leadCount, apolloUrl, fileName);
                 
             } catch (error) {
                 console.error('❌ Error:', error);
