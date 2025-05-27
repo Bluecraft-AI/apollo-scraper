@@ -1,5 +1,7 @@
 # 🚀 Apollo Lead Scraper - Vercel Deployment
 
+This repository serves as the main hub for the Apollo Lead Scraper with automated webhook delivery, hosted at [data.bluecraftleads.com](https://data.bluecraftleads.com).
+
 **What this does:** Automatically gets contact information (leads) from Apollo.io and delivers them via webhook. Fully automated with native Apify integration!
 
 ## 🎯 What You Get
