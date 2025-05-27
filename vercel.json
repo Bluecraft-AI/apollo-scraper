@@ -6,6 +6,10 @@
       "use": "@vercel/static"
     },
     {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    },
+    {
       "src": "api/config.js",
       "use": "@vercel/node"
     },
@@ -34,6 +38,10 @@
     {
       "src": "/health",
       "dest": "/server.js"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
       "src": "/",
